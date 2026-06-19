@@ -5,16 +5,26 @@ const Products = ({ products }) => {
 
   const [selectedBrand, setSelectedBrand] = useState("");
 
+  const [search, setSearch] = useState("");
+
   const brands = [
     ...new Set(products.map(product => product.brand))
   ];
 
-  const filteredProducts = selectedBrand
-    ? products.filter(
-        product => product.brand === selectedBrand
-      )
-    : products;
+  const filteredProducts = products.filter((product) => {
 
+  const matchBrand =
+    selectedBrand === "" ||
+    product.brand === selectedBrand;
+
+  const matchSearch =
+    product.title
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+  return matchBrand && matchSearch;
+
+});
   return (
     <div className="bg-white">
 
@@ -23,6 +33,13 @@ const Products = ({ products }) => {
         <h1 className="text-3xl font-bold mb-6">
           Products
         </h1>
+        <input
+        type="text"
+        placeholder="Search Product..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="border p-2 rounded w-full mb-4"
+        />
 
         <select
           value={selectedBrand}
