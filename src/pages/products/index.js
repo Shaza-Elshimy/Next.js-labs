@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState ,useDeferredValue} from "react";
 import ProductCard from "@/components/ProductCard";
 
 const Products = ({ products }) => {
@@ -7,6 +7,7 @@ const Products = ({ products }) => {
 
   const [search, setSearch] = useState("");
 
+  const deferredSearch = useDeferredValue(search)
   const brands = [
     ...new Set(products.map(product => product.brand))
   ];
@@ -20,7 +21,7 @@ const Products = ({ products }) => {
   const matchSearch =
     product.title
       .toLowerCase()
-      .includes(search.toLowerCase());
+      .includes(deferredSearch.toLowerCase());
 
   return matchBrand && matchSearch;
 
