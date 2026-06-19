@@ -8,6 +8,8 @@ const Products = ({ products }) => {
   const [search, setSearch] = useState("");
 
   const deferredSearch = useDeferredValue(search)
+
+  const [sortBy ,setSortBy] = useState("")
   const brands = [
     ...new Set(products.map(product => product.brand))
   ];
@@ -26,6 +28,15 @@ const Products = ({ products }) => {
   return matchBrand && matchSearch;
 
 });
+
+  const sortedProducts = [...filteredProducts];
+
+  if(sortBy === "price"){
+    sortedProducts.sort((a,b)=> a.price - b.price);
+  }
+  if(sortBy == "rating"){
+    sortedProducts.sort((a,b)=> b.rating - a.raiting)
+  }
   return (
     <div className="bg-white">
 
@@ -39,7 +50,7 @@ const Products = ({ products }) => {
         placeholder="Search Product..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="border p-2 rounded w-full mb-4"
+        className="border p-2 rounded w-[500px] m-4"
         />
 
         <select
@@ -60,10 +71,27 @@ const Products = ({ products }) => {
             </option>
           ))}
         </select>
+                <select
+        value={sortBy}
+        onChange={(e) => setSortBy(e.target.value)}
+        className="border p-2 rounded ml-4"
+        >
+        <option value="">
+            Sort By
+        </option>
+
+        <option value="price">
+            Price
+        </option>
+
+        <option value="rating">
+            Rating
+        </option>
+        </select>
 
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
 
-          {filteredProducts.map((product) => (
+          {sortedProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
