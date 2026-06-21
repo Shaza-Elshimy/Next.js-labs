@@ -1,29 +1,23 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 
-const ProductCard = ({ product }) => {
-        const { data: session } = useSession();
+const ProductCard = ({ product, onDelete }) => {
+  const { data: session } = useSession();
+  const [deleting, setDeleting] = useState(false);
 
-        const handleDelete = async () => {
+  const handleDelete = async () => {
+    if (deleting) return;
+    setDeleting(true);
+    try {
+      await onDelete(product._id);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
-        const confirmDelete =
-        confirm("Delete Product ?");
-
-        if(!confirmDelete) return;
-
-        await fetch(
-            `/api/products/${product._id}`,
-            {
-            method:"DELETE"
-            }
-        );
-
-        window.location.reload();
-
-        }
   return (
     <div className="group relative hover:shadow-lg transition p-2">
-
       <Link href={`/products/${product._id}`}>
         <img
           src={product.image}
@@ -33,36 +27,32 @@ const ProductCard = ({ product }) => {
 
         <div className="mt-4 flex justify-between">
           <div>
-            <h3 className="text-sm text-gray-700">
-              {product.title}
-            </h3>
-
-            <p className="mt-1 text-sm text-gray-500">
-              {product.category}
-            </p>
+            <h3 className="text-sm text-gray-700">{product.title}</h3>
+            <p className="mt-1 text-sm text-gray-500">{product.category}</p>
           </div>
-
-          <p className="text-sm font-medium text-gray-900">
-            ${product.price}
-          </p>
+          <p className="text-sm font-medium text-gray-900">${product.price}</p>
         </div>
       </Link>
 
       <div className="mt-3 flex gap-4">
-        {session && (<><Link
-          href={`/products/edit/${product._id}`}
-          className="text-blue-600 font-semibold"
-        >
-          Edit
-        </Link>
-        <button
-            onClick={handleDelete}
-            className="text-red-600"
-        >
-            Delete
-        </button></>)}
+        {session && (
+          <>
+            <Link
+              href={`/products/edit/${product._id}`}
+              className="text-blue-600 font-semibold"
+            >
+              Edit
+            </Link>
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              className="text-red-600 disabled:text-red-300"
+            >
+              {deleting ? "Deleting..." : "Delete"}
+            </button>
+          </>
+        )}
       </div>
-
     </div>
   );
 };
