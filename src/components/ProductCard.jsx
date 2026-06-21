@@ -3,7 +3,7 @@ import Link from "next/link";
 const ProductCard = ({product}) => {
 
   return (
-    <Link href={`/products/${product.id}`}>
+    <Link href={`/products/${product._id}`}>
         <div class="group relative hover:shadow-lg transaction">
             <img src={product.image} alt="Front of men&#039;s Basic Tee in white." class="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80" />
             <div class="mt-4 flex justify-between">
