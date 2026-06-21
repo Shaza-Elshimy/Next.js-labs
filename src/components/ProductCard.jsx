@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const ProductCard = ({ product ,onDelete}) => {
+        const { data: session } = useSession();
   return (
     <div className="group relative hover:shadow-lg transition p-2">
 
@@ -29,12 +31,12 @@ const ProductCard = ({ product ,onDelete}) => {
       </Link>
 
       <div className="mt-3 flex gap-4">
-        <Link
+        {session && (<Link
           href={`/products/edit/${product._id}`}
           className="text-blue-600 font-semibold"
         >
           Edit
-        </Link>
+        </Link>)}
         <button
             onClick={() => onDelete(product._id)}
             className="text-red-600"
