@@ -106,19 +106,21 @@ const Products = ({ products }) => {
   );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps(){
 
   const res = await fetch(
-    "https://dummyjson.com/products"
+    "http://localhost:3000/api/products"
   );
 
-  const data = await res.json();
+  const products = await res.json();
+
 
   return {
-    props: {
-      products: data.products,
-    },
+    props:{
+      products
+    }
   };
+
 }
 
 export default Products;
