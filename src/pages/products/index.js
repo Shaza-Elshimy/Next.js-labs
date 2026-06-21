@@ -1,70 +1,86 @@
-import { useState ,useDeferredValue} from "react";
+import { useState, useDeferredValue } from "react";
 import ProductCard from "@/components/ProductCard";
+import { useSession } from "next-auth/react";
 
 const Products = ({ products }) => {
 
-  const [allProducts, setAllProducts] =
-  useState(products);
-  const deleteProduct = async(id)=>{
+  const { data: session } = useSession();
 
-  const confirmDelete =
-  window.confirm(
-    "Are you sure?"
-  );
-
-  if(!confirmDelete) return;
-
-
-  await fetch(
-    `/api/products/${id}`,
-    {
-      method:"DELETE"
-    }
-  );
-
-
-  setAllProducts(
-    allProducts.filter(
-      product => product._id !== id
-    )
-  );
-
-};
+  const [allProducts, setAllProducts] = useState(products);
 
   const [selectedBrand, setSelectedBrand] = useState("");
 
   const [search, setSearch] = useState("");
 
-  const deferredSearch = useDeferredValue(search)
+  const [sortBy, setSortBy] = useState("");
 
-  const [sortBy ,setSortBy] = useState("")
+  const deferredSearch = useDeferredValue(search);
+
+  const deleteProduct = async (id) => {
+
+    const confirmDelete = window.confirm(
+      "Are you sure?"
+    );
+
+    if (!confirmDelete) return;
+
+    await fetch(
+      `/api/products/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    setAllProducts(
+      allProducts.filter(
+        (product) => product._id !== id
+      )
+    );
+  };
+
   const brands = [
-    ...new Set(allProducts.map(product => product.brand))
+    ...new Set(
+      allProducts.map(
+        (product) => product.brand
+      )
+    ),
   ];
 
-  const filteredProducts = products.filter((product) => {
+  const filteredProducts =
+    allProducts.filter((product) => {
 
-  const matchBrand =
-    selectedBrand === "" ||
-    product.brand === selectedBrand;
+      const matchBrand =
+        selectedBrand === "" ||
+        product.brand === selectedBrand;
 
-  const matchSearch =
-    product.title
-      .toLowerCase()
-      .includes(deferredSearch.toLowerCase());
+      const matchSearch =
+        product.title
+          .toLowerCase()
+          .includes(
+            deferredSearch.toLowerCase()
+          );
 
-  return matchBrand && matchSearch;
-
-});
+      return matchBrand && matchSearch;
+    });
 
   const sortedProducts = [...filteredProducts];
 
-  if(sortBy === "price"){
-    sortedProducts.sort((a,b)=> a.price - b.price);
+  if (sortBy === "price") {
+    sortedProducts.sort(
+      (a, b) => a.price - b.price
+    );
   }
-  if(sortBy == "rating"){
-    sortedProducts.sort((a,b)=> b.rating - a.raiting)
+
+  if (sortBy === "rating") {
+    sortedProducts.sort(
+      (a, b) => b.rating - a.rating
+    );
   }
+
+  const displayedProducts = session
+    ? sortedProducts
+    : sortedProducts.slice(0, 3);
+
   return (
     <div className="bg-white">
 
@@ -73,17 +89,22 @@ const Products = ({ products }) => {
         <h1 className="text-3xl font-bold mb-6">
           Products
         </h1>
+
         <input
-        type="text"
-        placeholder="Search Product..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="border p-2 rounded w-[500px] m-4"
+          type="text"
+          placeholder="Search Product..."
+          value={search}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
+          className="border p-2 rounded w-[500px] m-4"
         />
 
         <select
           value={selectedBrand}
-          onChange={(e) => setSelectedBrand(e.target.value)}
+          onChange={(e) =>
+            setSelectedBrand(e.target.value)
+          }
           className="border p-2 rounded mb-8"
         >
           <option value="">
@@ -99,29 +120,32 @@ const Products = ({ products }) => {
             </option>
           ))}
         </select>
-                <select
-        value={sortBy}
-        onChange={(e) => setSortBy(e.target.value)}
-        className="border p-2 rounded ml-4"
+
+        <select
+          value={sortBy}
+          onChange={(e) =>
+            setSortBy(e.target.value)
+          }
+          className="border p-2 rounded ml-4"
         >
-        <option value="">
+          <option value="">
             Sort By
-        </option>
+          </option>
 
-        <option value="price">
+          <option value="price">
             Price
-        </option>
+          </option>
 
-        <option value="rating">
+          <option value="rating">
             Rating
-        </option>
+          </option>
         </select>
 
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
 
-          {sortedProducts.map((product) => (
+          {displayedProducts.map((product) => (
             <ProductCard
-              key={product.id}
+              key={product._id}
               product={product}
               onDelete={deleteProduct}
             />
@@ -135,7 +159,7 @@ const Products = ({ products }) => {
   );
 };
 
-export async function getServerSideProps(){
+export async function getServerSideProps() {
 
   const res = await fetch(
     "http://localhost:3000/api/products"
@@ -143,13 +167,11 @@ export async function getServerSideProps(){
 
   const products = await res.json();
 
-
   return {
-    props:{
-      products
-    }
+    props: {
+      products,
+    },
   };
-
 }
 
 export default Products;
