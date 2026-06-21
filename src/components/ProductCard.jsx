@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product ,onDelete}) => {
   return (
     <div className="group relative hover:shadow-lg transition p-2">
 
@@ -35,6 +35,12 @@ const ProductCard = ({ product }) => {
         >
           Edit
         </Link>
+        <button
+            onClick={() => onDelete(product._id)}
+            className="text-red-600"
+        >
+            Delete
+        </button>
       </div>
 
     </div>

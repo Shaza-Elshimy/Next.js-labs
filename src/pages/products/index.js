@@ -3,6 +3,34 @@ import ProductCard from "@/components/ProductCard";
 
 const Products = ({ products }) => {
 
+  const [allProducts, setAllProducts] =
+  useState(products);
+  const deleteProduct = async(id)=>{
+
+  const confirmDelete =
+  window.confirm(
+    "Are you sure?"
+  );
+
+  if(!confirmDelete) return;
+
+
+  await fetch(
+    `/api/products/${id}`,
+    {
+      method:"DELETE"
+    }
+  );
+
+
+  setAllProducts(
+    allProducts.filter(
+      product => product._id !== id
+    )
+  );
+
+};
+
   const [selectedBrand, setSelectedBrand] = useState("");
 
   const [search, setSearch] = useState("");
@@ -11,7 +39,7 @@ const Products = ({ products }) => {
 
   const [sortBy ,setSortBy] = useState("")
   const brands = [
-    ...new Set(products.map(product => product.brand))
+    ...new Set(allProducts.map(product => product.brand))
   ];
 
   const filteredProducts = products.filter((product) => {
@@ -95,6 +123,7 @@ const Products = ({ products }) => {
             <ProductCard
               key={product.id}
               product={product}
+              onDelete={deleteProduct}
             />
           ))}
 
