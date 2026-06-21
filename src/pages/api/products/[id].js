@@ -25,5 +25,15 @@ export default async function handler(req, res) {
     );
 
   return res.status(200).json(product);
-}
+  }
+
+  if (req.method === "DELETE") {
+
+    await Product.findByIdAndDelete(id);
+
+    return res.status(200).json({
+        message: "Deleted"
+    });
+
+  }
 }
