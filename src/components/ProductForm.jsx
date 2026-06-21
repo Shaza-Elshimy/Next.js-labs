@@ -13,14 +13,35 @@ const ProductForm = ({ onSubmit, initialData = {} }) => {
   const [description, setDescription] = useState(
     initialData.description || ""
   );
+  const [category,setCategory] = useState(
+    initialData.category || ""
+    );
+
+    const [brand,setBrand] = useState(
+    initialData.brand || ""
+    );
+
+    const [rating,setRating] = useState(
+    initialData.rating || ""
+    );
+
+    const [image,setImage] = useState(
+    initialData.image || ""
+    );
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     onSubmit({
-      title,
-      price,
-      description,
+
+    title,
+    price,
+    description,
+    category,
+    brand,
+    rating,
+    image
+
     });
   };
 
@@ -57,6 +78,37 @@ const ProductForm = ({ onSubmit, initialData = {} }) => {
         }
         className="border p-2"
       />
+      <input
+        placeholder="Category"
+        value={category}
+        onChange={(e)=>setCategory(e.target.value)}
+        className="border p-2"
+        />
+
+
+        <input
+        placeholder="Brand"
+        value={brand}
+        onChange={(e)=>setBrand(e.target.value)}
+        className="border p-2"
+        />
+
+
+        <input
+        placeholder="Rating"
+        type="number"
+        value={rating}
+        onChange={(e)=>setRating(e.target.value)}
+        className="border p-2"
+        />
+
+
+        <input
+        placeholder="Image URL"
+        value={image}
+        onChange={(e)=>setImage(e.target.value)}
+        className="border p-2"
+        />
 
       <button
         className="bg-black text-white p-2"
